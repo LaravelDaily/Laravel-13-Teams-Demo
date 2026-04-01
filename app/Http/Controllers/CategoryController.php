@@ -28,7 +28,6 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request, Team $currentTeam): RedirectResponse
     {
         Category::create([
-            'team_id' => $request->user()->current_team_id,
             'name' => $request->validated('name'),
             'slug' => Str::slug($request->validated('name')),
         ]);

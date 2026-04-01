@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdatePostRequest extends FormRequest
 {
@@ -18,7 +19,11 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category_id' => ['required', 'exists:categories,id'],
+            'category_id' => [
+                'required',
+                Rule::exists('categories', 'id')
+                    ->where('team_id', $this->user()->current_team_id),
+            ],
             'title' => ['required', 'string', 'max:255'],
             'post_text' => ['required', 'string'],
         ];
