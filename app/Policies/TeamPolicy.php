@@ -68,7 +68,7 @@ class TeamPolicy
      */
     public function inviteMember(User $user, Team $team): bool
     {
-        return $user->hasTeamPermission($team, 'invitation:create');
+        return ! $team->is_personal && $user->hasTeamPermission($team, 'invitation:create');
     }
 
     /**

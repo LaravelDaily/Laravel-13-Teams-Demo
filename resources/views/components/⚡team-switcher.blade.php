@@ -119,7 +119,7 @@ new class extends Component {
                     data-test="team-switcher-item"
                 >
                     <div class="flex w-full items-center justify-between">
-                        <span>{{ $team->name }}</span>
+                        <span>{{ $team->isPersonal ? __('My Workspace') : $team->name }}</span>
                         @if ($team->isCurrent)
                             <flux:icon name="check" class="size-4" />
                         @endif

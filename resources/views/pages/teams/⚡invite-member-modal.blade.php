@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 new class extends Component {
@@ -25,6 +26,12 @@ new class extends Component {
     public function createInvitation(): void
     {
         Gate::authorize('inviteMember', $this->team);
+
+        if ($this->team->is_personal) {
+            throw ValidationException::withMessages([
+                'team' => __('You cannot invite members to a personal workspace. Create an organization team instead.'),
+            ]);
+        }
 
         $validated = $this->validate([
             'inviteEmail' => ['required', 'string', 'email', 'max:255', new UniqueTeamInvitation($this->team)],

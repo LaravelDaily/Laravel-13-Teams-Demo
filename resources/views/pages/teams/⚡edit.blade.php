@@ -163,7 +163,7 @@ new class extends Component
                         @endif
                     </div>
 
-                    @if ($this->permissions->canCreateInvitation)
+                    @if ($this->permissions->canCreateInvitation && ! $teamData['is_personal'])
                         <flux:modal.trigger name="invite-member">
                             <flux:button variant="primary" icon="user-plus" data-test="invite-member-button">
                                 {{ __('Invite member') }}
