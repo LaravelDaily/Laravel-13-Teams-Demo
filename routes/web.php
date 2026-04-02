@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
-use App\Http\Middleware\EnsureTeamMembership;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -11,12 +11,20 @@ Route::view('/', 'welcome', [
 ])->name('home');
 
 Route::prefix('{current_team}')
-    ->middleware(['auth', 'verified', EnsureTeamMembership::class])
+    ->middleware(['auth', 'verified', 'team.member'])
     ->group(function () {
         Route::view('dashboard', 'dashboard')->name('dashboard');
 
         Route::resource('categories', CategoryController::class)->except(['show']);
         Route::resource('posts', PostController::class)->except(['show']);
+
+        Route::middleware('team.member:admin')->group(function () {
+            Route::view('settings', 'team-settings')->name('team.settings');
+        });
+
+        Route::middleware('team.member:owner')->group(function () {
+            Route::delete('delete', [TeamController::class, 'destroy'])->name('team.destroy');
+        });
     });
 
 Route::middleware(['auth'])->group(function () {
