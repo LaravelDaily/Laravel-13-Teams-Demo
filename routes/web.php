@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\TeamController;
+use App\Models\TeamInvitation;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -28,6 +29,24 @@ Route::prefix('{current_team}')
             Route::delete('delete', [TeamController::class, 'destroy'])->name('team.destroy');
         });
     });
+
+Route::get('join/{code}', function (string $code) {
+    $invitation = TeamInvitation::where('code', $code)
+        ->whereNull('accepted_at')
+        ->where(function ($query) {
+            $query->whereNull('expires_at')
+                ->orWhere('expires_at', '>', now());
+        })
+        ->firstOrFail();
+
+    if (! auth()->check()) {
+        session(['pending_invitation' => $code]);
+
+        return redirect()->route('register');
+    }
+
+    return redirect()->route('invitations.accept', $invitation);
+})->name('teams.join');
 
 Route::middleware(['auth'])->group(function () {
     Route::livewire('invitations/{invitation}/accept', 'pages::teams.accept-invitation')->name('invitations.accept');
