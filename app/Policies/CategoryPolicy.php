@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Enums\TeamRole;
 use App\Models\Category;
 use App\Models\User;
 
@@ -20,9 +19,7 @@ class CategoryPolicy
 
     public function create(User $user): bool
     {
-        $role = $user->teamRole($user->currentTeam);
-
-        return $role !== null && $role->isAtLeast(TeamRole::Member);
+        return $user->hasTeamPermission($user->currentTeam, 'category:create');
     }
 
     public function update(User $user, Category $category): bool
@@ -31,9 +28,7 @@ class CategoryPolicy
             return false;
         }
 
-        $role = $user->teamRole($user->currentTeam);
-
-        return $role !== null && $role->isAtLeast(TeamRole::Member);
+        return $user->hasTeamPermission($user->currentTeam, 'category:update');
     }
 
     public function delete(User $user, Category $category): bool
@@ -42,8 +37,6 @@ class CategoryPolicy
             return false;
         }
 
-        $role = $user->teamRole($user->currentTeam);
-
-        return $role !== null && $role->isAtLeast(TeamRole::Admin);
+        return $user->hasTeamPermission($user->currentTeam, 'category:delete');
     }
 }
