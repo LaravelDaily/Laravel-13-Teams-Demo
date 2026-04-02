@@ -28,7 +28,7 @@ class TeamController extends Controller
     {
         $user = request()->user();
 
-        abort_if($user->ownsTeam($currentTeam), 403, 'Owners cannot leave. Transfer ownership first.');
+        abort_if($user->ownsTeam($currentTeam), 403, 'Team owners cannot leave their own team.');
         abort_if($currentTeam->is_personal, 403, 'You cannot leave a personal team.');
 
         $currentTeam->memberships()->where('user_id', $user->id)->delete();
