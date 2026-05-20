@@ -1,4 +1,4 @@
-import { Passkeys } from "@laravel/passkeys";
+import { Passkeys } from '@laravel/passkeys';
 
-await Passkeys.register({ name: "MacBook Pro" });
-await Passkeys.verify();
+window.Passkeys = Passkeys;
+window.dispatchEvent(new CustomEvent('passkeys:ready'));
